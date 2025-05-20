@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FormController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,4 +25,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+// Form routes with admin middleware
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('forms', FormController::class);
+    Route::post('forms/import-json', [FormController::class, 'importJson'])->name('forms.import-json');
+    Route::post('forms/{form}/update-structure', [FormController::class, 'updateStructure'])->name('forms.update-structure');
+});
+
+require __DIR__ . '/auth.php';
