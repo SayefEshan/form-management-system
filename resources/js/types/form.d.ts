@@ -5,6 +5,7 @@ export interface FormField {
     placeholder?: string;
     required?: boolean;
     options?: Array<{ label: string; value: string }>; // for select/checkboxes
+    [key: string]: any; // Add index signature
 }
 
 export interface Form {
@@ -15,4 +16,5 @@ export interface Form {
     fields: FormField[];
     created_at?: string;
     updated_at?: string;
+    [key: string]: any; // Add index signature
 }
