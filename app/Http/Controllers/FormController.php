@@ -42,6 +42,11 @@ class FormController extends Controller
 
         $fields = json_decode($validated['fields'], true);
 
+        // Ensure JSON was valid
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return redirect()->back()->withErrors(['fields' => 'Invalid JSON format for fields']);
+        }
+
         $form = Form::create([
             'title' => $validated['title'],
             'method' => $validated['method'],

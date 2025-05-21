@@ -25,11 +25,16 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Form routes with admin middleware
+// Form management routes with admin middleware
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::resource('forms', FormController::class);
-    Route::post('forms/import-json', [FormController::class, 'importJson'])->name('forms.import-json');
-    Route::post('forms/{form}/update-structure', [FormController::class, 'updateStructure'])->name('forms.update-structure');
+    Route::get('/forms', [FormController::class, 'index'])->name('forms.index');
+    Route::get('/forms/create', [FormController::class, 'create'])->name('forms.create');
+    Route::post('/forms', [FormController::class, 'store'])->name('forms.store');
+    Route::get('/forms/{form}', [FormController::class, 'show'])->name('forms.show');
+    Route::get('/forms/{form}/edit', [FormController::class, 'edit'])->name('forms.edit');
+    Route::put('/forms/{form}', [FormController::class, 'update'])->name('forms.update');
+    Route::post('/forms/import-json', [FormController::class, 'importJson'])->name('forms.import-json');
+    Route::post('/forms/{form}/update-structure', [FormController::class, 'updateStructure'])->name('forms.update-structure');
 });
 
 require __DIR__ . '/auth.php';
