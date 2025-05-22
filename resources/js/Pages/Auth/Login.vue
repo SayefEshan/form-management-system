@@ -31,6 +31,10 @@ const submit = () => {
     <GuestLayout>
         <Head title="Log in" />
 
+        <div class="mb-8 text-center">
+            <h1 class="text-2xl font-bold text-gray-900">Form Management System</h1>
+        </div>
+
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
         </div>
@@ -76,22 +80,31 @@ const submit = () => {
                 </label>
             </div>
 
-            <div class="mt-4 flex items-center justify-end">
+            <div class="mt-4 flex items-center justify-between">
                 <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    :href="route('register')"
+                    class="text-sm text-gray-600 underline hover:text-gray-900"
                 >
-                    Forgot your password?
+                    Register
                 </Link>
 
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Log in
-                </PrimaryButton>
+                <div class="flex items-center">
+                    <Link
+                        v-if="canResetPassword"
+                        :href="route('password.request')"
+                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    >
+                        Forgot your password?
+                    </Link>
+
+                    <PrimaryButton
+                        class="ms-4"
+                        :class="{ 'opacity-25': form.processing }"
+                        :disabled="form.processing"
+                    >
+                        Log in
+                    </PrimaryButton>
+                </div>
             </div>
         </form>
     </GuestLayout>
