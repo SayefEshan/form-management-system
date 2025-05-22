@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Form;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use App\Http\Requests\FormStoreRequest;
 
 class FormController extends Controller
 {
@@ -31,14 +32,9 @@ class FormController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(FormStoreRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'method' => 'required|string|max:255',
-            'action' => 'required|string|max:255',
-            'fields' => 'required|array',
-        ]);
+        $validated = $request->validated();
 
         $fields = $validated['fields'];
 
@@ -75,14 +71,9 @@ class FormController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Form $form)
+    public function update(FormStoreRequest $request, Form $form)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'method' => 'required|string|max:255',
-            'action' => 'required|string|max:255',
-            'fields' => 'required|array',
-        ]);
+        $validated = $request->validated();
 
         $form->update($validated);
 
