@@ -119,17 +119,7 @@ Before you begin, ensure you have the following installed:
     php artisan test
     ```
 
-2. **Code Style Checking**
-
-    ```bash
-    # PHP
-    composer run lint
-
-    # JavaScript/TypeScript
-    npm run lint
-    ```
-
-3. **Building for Production**
+2. **Building for Production**
     ```bash
     npm run build
     ```
