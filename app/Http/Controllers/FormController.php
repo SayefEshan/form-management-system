@@ -39,7 +39,7 @@ class FormController extends Controller
             'action' => 'required|string|max:255',
             'fields' => 'required|array',
         ]);
-        
+
         $fields = $validated['fields'];
 
         $form = Form::create([
@@ -92,9 +92,10 @@ class FormController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Form $form)
     {
-        //
+        $form->delete();
+        return redirect()->route('forms.index')->with('success', 'Form deleted successfully');
     }
 
     /**

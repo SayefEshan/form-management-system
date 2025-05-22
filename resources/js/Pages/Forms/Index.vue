@@ -1,13 +1,27 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Form } from '@/types/form';
+import { computed } from 'vue';
 
 interface Props {
   forms: Form[];
 }
 
 const props = defineProps<Props>();
+
+const sortedForms = computed(() => {
+  return [...props.forms].sort((a, b) => {
+    return new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime();
+  });
+});
+
+const deleteForm = (formId: number | undefined) => {
+  console.log(formId);
+  if (formId && confirm('Are you sure you want to delete this form?')) {
+    router.delete(route('forms.destroy', formId));
+  }
+};
 </script>
 
 <template>
@@ -41,13 +55,14 @@ const props = defineProps<Props>();
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fields</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                     <th scope="col" class="relative px-6 py-3">
                       <span class="sr-only">Actions</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                  <tr v-for="form in forms" :key="form.id">
+                  <tr v-for="form in sortedForms" :key="form.id">
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="text-sm font-medium text-gray-900">{{ form.title }}</div>
                     </td>
@@ -60,9 +75,18 @@ const props = defineProps<Props>();
                     <td class="px-6 py-4 whitespace-nowrap">
                       <div class="text-sm text-gray-500">{{ form.action }}</div>
                     </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm text-gray-500">{{ new Date(form.created_at || '').toLocaleDateString() }}</div>
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link :href="route('forms.show', form.id)" class="text-blue-600 hover:text-blue-900 mr-4">View</Link>
-                      <Link :href="route('forms.edit', form.id)" class="text-indigo-600 hover:text-indigo-900">Edit</Link>
+                      <Link :href="route('forms.edit', form.id)" class="text-indigo-600 hover:text-indigo-900 mr-4">Edit</Link>
+                      <button 
+                        @click="deleteForm(form.id)" 
+                        class="text-red-600 hover:text-red-900"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 </tbody>
