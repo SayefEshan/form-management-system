@@ -65,27 +65,19 @@ Before you begin, ensure you have the following installed:
     php artisan key:generate
     ```
 
-6. Create the database:
+6. Run migrations and seed the database:
 
     ```bash
-    mysql -u root -p
-    CREATE DATABASE form_management;
-    exit;
+    php artisan migrate --seed
     ```
 
-7. Run migrations:
+    This will automatically:
 
-    ```bash
-    php artisan migrate
-    ```
+    - Create the database if it doesn't exist
+    - Run all migrations
+    - Seed the database with initial data
 
-8. Seed the database (optional):
-
-    ```bash
-    php artisan db:seed
-    ```
-
-9. Start the development servers:
+7. Start the development servers:
 
     In one terminal, start the Laravel development server:
 
