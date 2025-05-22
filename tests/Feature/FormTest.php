@@ -19,8 +19,16 @@ class FormTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->admin = User::factory()->create(['is_admin' => true]);
-        $this->user = User::factory()->create(['is_admin' => false]);
+
+        // Create admin role if it doesn't exist
+        $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
+
+        // Create admin user and assign role
+        $this->admin = User::factory()->create();
+        $this->admin->assignRole('admin');
+
+        // Create regular user
+        $this->user = User::factory()->create();
     }
 
     #[Test]
@@ -47,7 +55,8 @@ class FormTest extends TestCase
 
         $response = $this->get(route('forms.index'));
 
-        $response->assertStatus(403);
+        $response->assertStatus(302);
+        $response->assertSessionHas('error', 'Access denied. This system requires admin privileges. Please login with an admin account.');
     }
 
     #[Test]

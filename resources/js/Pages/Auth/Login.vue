@@ -10,6 +10,7 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 defineProps<{
     canResetPassword?: boolean;
     status?: string;
+    error?: string;
 }>();
 
 const form = useForm({
@@ -33,6 +34,10 @@ const submit = () => {
 
         <div class="mb-8 text-center">
             <h1 class="text-2xl font-bold text-gray-900">Form Management System</h1>
+        </div>
+
+        <div v-if="error" class="mb-4 text-sm font-medium text-red-600">
+            {{ error }}
         </div>
 
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">

@@ -16,8 +16,9 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            abort(403, 'Unauthorized');
+        if (!Auth::check() || !Auth::user()->hasRole('admin')) {
+            Auth::logout();
+            return redirect()->route('login')->with('error', 'Access denied. This system requires admin privileges. Please login with an admin account.');
         }
 
         return $next($request);

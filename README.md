@@ -96,11 +96,20 @@ Before you begin, ensure you have the following installed:
     - Laravel backend: http://localhost:8000
     - Vite frontend: http://localhost:5173
 
-    You can log in with the following admin credentials:
+    You can log in with the following credentials:
+
+    Admin User:
 
     ```
     Email: admin@miaki.co
     Password: admin123
+    ```
+
+    Regular User:
+
+    ```
+    Email: user@miaki.co
+    Password: user123
     ```
 
 ## Development Workflow
