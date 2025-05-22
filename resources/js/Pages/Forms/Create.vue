@@ -1,6 +1,6 @@
 <!-- resources/js/Pages/Forms/Create.vue -->
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import FormFieldEditor from '@/Components/Forms/FormFieldEditor.vue';
@@ -10,7 +10,11 @@ const showJsonImport = ref(false);
 const jsonInput = ref('');
 const errorMessage = ref('');
 const draggedItemIndex = ref<number | null>(null);
-const formErrors = ref<{ title?: string; action?: string }>({});
+const formErrors = ref<Record<string, string>>({});
+
+const errorEntries = computed(() => {
+  return Object.entries(formErrors.value).filter(([key]) => key !== 'backend');
+});
 
 // Initialize empty form structure
 const form = useForm<Form>({
@@ -102,6 +106,18 @@ const submit = () => {
       // Reset form after successful submission
       form.reset();
       formErrors.value = {};
+    },
+    onError: (errors) => {
+      // Handle backend errors
+      if (errors.message) {
+        formErrors.value.backend = errors.message;
+      }
+      // Handle field-specific errors
+      Object.keys(errors).forEach(key => {
+        if (key !== 'message') {
+          formErrors.value[key] = errors[key];
+        }
+      });
     }
   });
 };
@@ -260,6 +276,18 @@ const allowDrop = (e: DragEvent) => {
                   />
                 </div>
               </div>
+            </div>
+            
+            <!-- Add this after the form fields section and before the submit button -->
+            <div v-if="formErrors.backend" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded relative">
+              <strong class="font-bold">Error: </strong>
+              <span class="block sm:inline">{{ formErrors.backend }}</span>
+            </div>
+            
+            <!-- Add error display for field-specific errors -->
+            <div v-for="[key, error] in errorEntries" :key="key" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded relative">
+              <strong class="font-bold">{{ key }}: </strong>
+              <span class="block sm:inline">{{ error }}</span>
             </div>
             
             <!-- Submit button -->
