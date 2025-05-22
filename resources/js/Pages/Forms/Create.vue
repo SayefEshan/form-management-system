@@ -9,6 +9,8 @@ import { Form, FormField } from '@/types/form';
 const showJsonImport = ref(false);
 const jsonInput = ref('');
 const errorMessage = ref('');
+const draggedItemIndex = ref<number | null>(null);
+const formErrors = ref<{ title?: string; action?: string }>({});
 
 // Initialize empty form structure
 const form = useForm<Form>({
@@ -67,7 +69,28 @@ const importJson = () => {
   }
 };
 
+const validateForm = () => {
+  formErrors.value = {};
+  let isValid = true;
+
+  if (!form.title.trim()) {
+    formErrors.value.title = 'Form title is required';
+    isValid = false;
+  }
+
+  if (!form.action.trim()) {
+    formErrors.value.action = 'Form action is required';
+    isValid = false;
+  }
+
+  return isValid;
+};
+
 const submit = () => {
+  if (!validateForm()) {
+    return;
+  }
+
   // Convert fields to JSON string for backend
   const formData = {
     ...form,
@@ -78,8 +101,39 @@ const submit = () => {
     onSuccess: () => {
       // Reset form after successful submission
       form.reset();
+      formErrors.value = {};
     }
   });
+};
+
+// Drag and drop functionality
+const startDrag = (index: number) => {
+  draggedItemIndex.value = index;
+};
+
+const onDrop = (targetIndex: number) => {
+  if (draggedItemIndex.value === null) return;
+  
+  const sourceIndex = draggedItemIndex.value;
+  
+  // Don't do anything if dropping onto the same item
+  if (sourceIndex === targetIndex) return;
+  
+  // Get the item being dragged
+  const draggedItem = { ...form.fields[sourceIndex] };
+  
+  // Remove the dragged item from its original position
+  form.fields.splice(sourceIndex, 1);
+  
+  // Add the dragged item at the new position
+  form.fields.splice(targetIndex, 0, draggedItem);
+  
+  // Reset draggedItemIndex
+  draggedItemIndex.value = null;
+};
+
+const allowDrop = (e: DragEvent) => {
+  e.preventDefault();
 };
 </script>
 
@@ -108,14 +162,16 @@ const submit = () => {
             <!-- Basic form details -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div>
-                <label for="title" class="block text-sm font-medium text-gray-700">Form Title</label>
+                <label for="title" class="block text-sm font-medium text-gray-700">Form Title <span class="text-red-500">*</span></label>
                 <input 
                   id="title" 
                   v-model="form.title" 
                   type="text" 
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  :class="{ 'border-red-500': formErrors.title }"
                   placeholder="Enter form title"
                 />
+                <p v-if="formErrors.title" class="mt-1 text-sm text-red-600">{{ formErrors.title }}</p>
               </div>
               <div>
                 <label for="method" class="block text-sm font-medium text-gray-700">Form Method</label>
@@ -129,14 +185,16 @@ const submit = () => {
                 </select>
               </div>
               <div>
-                <label for="action" class="block text-sm font-medium text-gray-700">Form Action</label>
+                <label for="action" class="block text-sm font-medium text-gray-700">Form Action <span class="text-red-500">*</span></label>
                 <input 
                   id="action" 
                   v-model="form.action" 
                   type="text" 
                   class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                  :class="{ 'border-red-500': formErrors.action }"
                   placeholder="/submit"
                 />
+                <p v-if="formErrors.action" class="mt-1 text-sm text-red-600">{{ formErrors.action }}</p>
               </div>
             </div>
             
@@ -177,13 +235,30 @@ const submit = () => {
                 <p class="text-gray-500">No fields added yet. Add fields using the buttons above or import a JSON configuration.</p>
               </div>
               <div v-else class="space-y-4">
-                <FormFieldEditor 
+                <p class="text-sm text-gray-600 mb-4">Drag and drop fields to reorder them.</p>
+                <div 
                   v-for="(field, index) in form.fields" 
                   :key="index"
-                  :field="field"
-                  :index="index"
-                  @remove="removeField(index)"
-                />
+                  draggable="true"
+                  @dragstart="startDrag(index)"
+                  @dragover="allowDrop"
+                  @drop="onDrop(index)"
+                  class="drag-item"
+                >
+                  <!-- Visual indicator for draggable items -->
+                  <div class="flex items-center mb-2 cursor-move bg-gray-100 p-2 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-sm text-gray-600">Drag to reorder</span>
+                  </div>
+                  
+                  <FormFieldEditor 
+                    :field="field"
+                    :index="index"
+                    @remove="removeField(index)"
+                  />
+                </div>
               </div>
             </div>
             
@@ -232,3 +307,18 @@ const submit = () => {
     </div>
   </AuthenticatedLayout>
 </template>
+
+<style scoped>
+.drag-item {
+  transition: all 0.3s ease;
+}
+
+.drag-item:hover {
+  opacity: 0.9;
+}
+
+.drag-item.dragging {
+  opacity: 0.5;
+  background-color: #f3f4f6;
+}
+</style>
