@@ -20,6 +20,7 @@ const handleSubmit = (data: Record<string, any>) => {
   formData.value = data;
   formSubmitted.value = true;
 };
+console.log(props.form);
 </script>
 
 <template>

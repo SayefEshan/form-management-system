@@ -36,6 +36,13 @@ const sampleJson = {
       "required": true
     },
     {
+      "type": "password",
+      "name": "password",
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "required": true
+    },
+    {
       "type": "textarea",
       "name": "message",
       "label": "Message",

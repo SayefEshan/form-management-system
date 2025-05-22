@@ -80,6 +80,17 @@ const handleSubmit = (e: Event) => {
         @blur="validateField(field)"
       />
       
+      <!-- Password field -->
+      <input 
+        v-else-if="field.type === 'password'" 
+        :id="field.name"
+        v-model="formData[field.name]"
+        type="password"
+        :placeholder="field.placeholder"
+        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+        @blur="validateField(field)"
+      />
+      
       <!-- Email field -->
       <input 
         v-else-if="field.type === 'email'" 

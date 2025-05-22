@@ -33,6 +33,13 @@ class FormSeeder extends Seeder
                     'required' => true
                 ],
                 [
+                    'type' => 'password',
+                    'name' => 'password',
+                    'label' => 'Password',
+                    'placeholder' => 'Enter your password',
+                    'required' => true
+                ],
+                [
                     'type' => 'textarea',
                     'name' => 'message',
                     'label' => 'Message',

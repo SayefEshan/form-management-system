@@ -38,9 +38,16 @@ class FormFactory extends Factory
                 ],
                 [
                     'type' => 'email',
-                    'name' => 'email',  
+                    'name' => 'email',
                     'label' => 'Email Address',
                     'placeholder' => 'Enter your email address',
+                    'required' => true
+                ],
+                [
+                    'type' => 'password',
+                    'name' => 'password',
+                    'label' => 'Password',
+                    'placeholder' => 'Enter your password',
                     'required' => true
                 ],
                 [
